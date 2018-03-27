@@ -17,9 +17,15 @@
         "stock_scanner",
     ],
     "data": [
-        "views/web_templates.xml",
+        "views/stock_scanner_widget_instance.xml",
         "views/warehouse_menu.xml",
         "views/res_user_view.xml",
-        "views/scanner_hardware.xml"
+        "views/scanner_hardware.xml",
     ],
+    'qweb': [
+        'static/src/xml/*.xml'
+    ],
+    'installable': True,
+    'application': False,
+    'license': 'AGPL-3',
 }

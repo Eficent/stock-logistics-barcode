@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <template id="assets_backend" name="stock_scanner_web" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/stock_scanner_web/static/src/css/custom.css"/>
+            <script type="text/javascript" src="/stock_scanner_web/static/src/js/stock_scanner_web.js"></script>
+        </xpath>
+    </template>
+
+    <record model="ir.ui.view" id="stock_scanner_instance_view_form">
+        <field name="name">stock.scanner.instance.view.form</field>
+        <field name="model">stock.scanner.instance</field>
+        <field name="priority" eval="20 "/>
+        <field name="arch" type="xml">
+            <form string="Stock Scanner Widget" edit="false" create="false"
+                  delete="false" >
+                <widget type="stock_scanner_widget"></widget>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="stock_scanner_instance_view_action">
+        <field name="name">Stock Scanner Widget</field>
+        <field name="view_id" ref="stock_scanner_instance_view_form"/>
+        <field name="res_model">stock.scanner.instance</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="domain">[('temporary', '=', False)]</field>
+    </record>
+
+</odoo>

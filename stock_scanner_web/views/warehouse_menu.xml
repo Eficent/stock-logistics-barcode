@@ -17,7 +17,7 @@
               name="Web Stock Scanner"
               parent="stock.menu_stock_root"
               sequence="1"
-              action="stock_web_action"
+              action="stock_scanner_instance_view_action"
     />
 
 </odoo>

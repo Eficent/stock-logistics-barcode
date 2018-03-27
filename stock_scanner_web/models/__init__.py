@@ -6,3 +6,4 @@
 
 from . import res_user
 from . import scanner_hardware
+from . import stock_scanner_instance
