@@ -37,7 +37,7 @@ class WizStockBarcodesRead(models.AbstractModel):
             return super().process_barcode(barcode)
         processed = False
         package_barcode = barcode_decoded.get('01', False)
-        product_barcode = barcode_decoded.get('02', False)
+        product_barcode = barcode_decoded.get('240', False)
         lot_barcode = barcode_decoded.get('10', False)
         product_qty = barcode_decoded.get('37', False)
         if product_barcode:
