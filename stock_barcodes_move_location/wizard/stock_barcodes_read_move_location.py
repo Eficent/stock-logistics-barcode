@@ -57,7 +57,8 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
     def _add_move_location_line(self):
         MoveLocationLine = self.env['wiz.stock.move.location.line']
         line = self.move_location_id.stock_move_location_line_ids.filtered(
-            lambda x: x.product_id == self.product_id or x.lot_id == self.lot_id
+            lambda x: (x.product_id == self.product_id and
+                       x.lot_id == self.lot_id)
         )
         if line:
             line.write({
@@ -103,7 +104,7 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
         if log_scan:
             move_location_line = self.move_location_id.\
                 stock_move_location_line_ids.filtered(
-                    lambda x: (x.product_id == log_scan.product_id or
+                    lambda x: (x.product_id == log_scan.product_id and
                                x.lot_id == log_scan.lot_id)
                 )
             if move_location_line:
