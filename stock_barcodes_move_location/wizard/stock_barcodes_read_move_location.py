@@ -44,7 +44,7 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
         # Apply the putaway strategy
         move_location_dest_id = self.move_location_id.destination_location_id
         self.location_dest_id = (
-            self.move_location_id.destination_location_id.get_putaway_strategy(
+            self.move_location_id.destination_location_id._get_putaway_strategy(
                 self.product_id
             )
             or move_location_dest_id
