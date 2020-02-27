@@ -10,11 +10,13 @@
     "category": "Extra Tools",
     "depends": [
         "stock_barcodes",
+        "printer_zpl2",
         "stock_move_location",
         "stock_barcodes_automatic_entry",
     ],
     "data": [
         "views/assets.xml",
+        "views/stock_picking_type_views.xml",
         "wizard/stock_move_location_views.xml",
         "wizard/stock_barcodes_read_move_location_views.xml",
     ],

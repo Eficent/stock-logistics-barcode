@@ -16,5 +16,7 @@ odoo.define('stock_barcodes_move_location.FormController', function(require) {
             }
             return $.when(false);
         },
+
     });
 });
+

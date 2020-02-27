@@ -1,10 +1,23 @@
 # Copyright 2019 Sergio Teruel <sergio.teruel@tecnativa.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
-from odoo import _, fields, models
+from odoo import _, api, fields, models
 from odoo.fields import first
+import subprocess
+from subprocess import PIPE
+import logging
+from odoo.tools.safe_eval import safe_eval
 
+_logger = logging.getLogger(__name__)
 from odoo.addons import decimal_precision as dp
 
+
+def find_between(s, first, last):
+    try:
+        start = s.index( first ) + len( first )
+        end = s.index( last, start )
+        return s[start:end]
+    except ValueError:
+        return ""
 
 class WizStockBarcodesReadMoveLocation(models.TransientModel):
     _name = "wiz.stock.barcodes.read.move.location"
@@ -22,6 +35,34 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
     location_dest_id = fields.Many2one(
         comodel_name="stock.location", string="Destination Location", readonly=True
     )
+
+
+    def action_zbarcam(self):
+        res = False
+        proc = subprocess.Popen(["zbarcam"], stdout=PIPE, stderr=PIPE)
+        (res, error) = proc.communicate()
+        _logger.info(res)
+        barcodes = str(res.decode("utf-8"))
+        # TODO move to stock_barcodes_zbarcam module
+        # TODO implement other barcodes types
+        qr = find_between(barcodes, 'QR-Code:', '\n')
+        if qr:
+            qr = qr.replace('}', '},') # for multiple lectures
+            qr = '[' + qr + ']'
+            qr = safe_eval(qr)
+            for bar in qr:
+                self.barcode = str(bar)
+                self.reset_qty()
+                self.process_barcode(str(bar))
+                self.action_manual_entry()
+        code128 = find_between(barcodes, 'CODE-128:', '\n')
+        if code128:
+            code128 = code128.split(',')
+            for bar in code128:
+                self.barcode = str(bar)
+                self.reset_qty()
+                self.process_barcode(str(bar))
+                self.action_manual_entry()
 
     def name_get(self):
         return [
@@ -76,7 +117,7 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
         if self.product_id.tracking != "none" and not self.lot_id:
             self._set_messagge_info("info", _("Waiting for input lot"))
             return False
-        force_add_log = self.env.context.get("force_add_log", False)
+            force_add_log = self.env.context.get("force_add_log", False)
         if self.manual_entry and not force_add_log:
             return False
         return super().check_done_conditions()
@@ -116,7 +157,3 @@ class WizStockBarcodesReadMoveLocation(models.TransientModel):
                 self.move_location_qty = move_location_line.move_quantity
         log_scan.unlink()
         return res
-
-    def action_automatic_entry(self):
-        self._set_messagge_info("success", _("Barcode read correctly"))
-        self.action_manual_entry()
