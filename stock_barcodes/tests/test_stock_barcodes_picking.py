@@ -1,8 +1,11 @@
 # Copyright 2108-2019 Sergio Teruel <sergio.teruel@tecnativa.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+from odoo.tests.common import tagged
+
 from odoo.addons.stock_barcodes.tests.test_stock_barcodes import TestStockBarcodes
 
 
+@tagged("post_install", "-at_install")
 class TestStockBarcodesPicking(TestStockBarcodes):
     def setUp(self):
         super().setUp()
@@ -39,7 +42,7 @@ class TestStockBarcodesPicking(TestStockBarcodes):
                                 "location_id": self.stock_location.id,
                                 "location_dest_id": self.customer_location.id,
                             },
-                        ),
+                        )
                     ],
                 }
             )
@@ -207,7 +210,7 @@ class TestStockBarcodesPicking(TestStockBarcodes):
             lambda c: c.picking_id == self.picking_out_01
         )
         candidate_wiz = candidate.with_context(
-            wiz_barcode_id=self.wiz_scan_picking.id, picking_id=self.picking_out_01.id,
+            wiz_barcode_id=self.wiz_scan_picking.id, picking_id=self.picking_out_01.id
         )
         candidate_wiz.action_lock_picking()
         self.assertEqual(self.picking_out_01.move_lines.quantity_done, 2)

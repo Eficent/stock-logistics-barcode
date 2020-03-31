@@ -3,12 +3,12 @@
 {
     "name": "Stock Barcodes",
     "summary": "It provides read barcode on stock operations.",
-    "version": "12.0.1.1.2",
+    "version": "13.0.1.0.0",
     "author": "Tecnativa, " "Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/stock-logistics-barcode",
     "license": "AGPL-3",
     "category": "Extra Tools",
-    "depends": ["barcodes", "stock",],
+    "depends": ["barcodes", "stock"],
     "data": [
         "security/ir.model.access.csv",
         "views/assets.xml",

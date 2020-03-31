@@ -7,8 +7,6 @@ from odoo.exceptions import ValidationError
 from odoo.fields import first
 from odoo.tools.float_utils import float_compare
 
-from odoo.addons import decimal_precision as dp
-
 _logger = logging.getLogger(__name__)
 
 
@@ -18,7 +16,7 @@ class WizStockBarcodesReadPicking(models.TransientModel):
     _description = "Wizard to read barcode on picking"
 
     picking_id = fields.Many2one(
-        comodel_name="stock.picking", string="Picking", readonly=True,
+        comodel_name="stock.picking", string="Picking", readonly=True
     )
     candidate_picking_ids = fields.One2many(
         comodel_name="wiz.candidate.picking",
@@ -27,15 +25,13 @@ class WizStockBarcodesReadPicking(models.TransientModel):
         readonly=True,
     )
     picking_product_qty = fields.Float(
-        string="Picking quantities",
-        digits=dp.get_precision("Product Unit of Measure"),
-        readonly=True,
+        string="Picking quantities", digits="Product Unit of Measure", readonly=True
     )
     picking_type_code = fields.Selection(
-        [("incoming", "Vendors"), ("outgoing", "Customers"), ("internal", "Internal"),],
+        [("incoming", "Vendors"), ("outgoing", "Customers"), ("internal", "Internal")],
         "Type of Operation",
     )
-    confirmed_moves = fields.Boolean(string="Confirmed moves",)
+    confirmed_moves = fields.Boolean(string="Confirmed moves")
 
     def name_get(self):
         return [
@@ -123,7 +119,7 @@ class WizStockBarcodesReadPicking(models.TransientModel):
 
     def _set_candidate_pickings(self, candidate_pickings):
         vals = [(5, 0, 0)]
-        vals.extend([(0, 0, {"picking_id": p.id,}) for p in candidate_pickings])
+        vals.extend([(0, 0, {"picking_id": p.id}) for p in candidate_pickings])
         self.candidate_picking_ids = vals
 
     def _search_candidate_pickings(self, moves_todo=False):
@@ -240,7 +236,7 @@ class WizStockBarcodesReadPicking(models.TransientModel):
         vals["picking_id"] = self.picking_id.id
         if log_detail:
             vals["log_line_ids"] = [
-                (0, 0, {"move_line_id": x[0], "product_qty": x[1],})
+                (0, 0, {"move_line_id": x[0], "product_qty": x[1]})
                 for x in log_detail.items()
             ]
         return vals
@@ -282,10 +278,10 @@ class WizCandidatePicking(models.TransientModel):
     _transient_max_hours = 48
 
     wiz_barcode_id = fields.Many2one(
-        comodel_name="wiz.stock.barcodes.read.picking", readonly=True,
+        comodel_name="wiz.stock.barcodes.read.picking", readonly=True
     )
     picking_id = fields.Many2one(
-        comodel_name="stock.picking", string="Picking", readonly=True,
+        comodel_name="stock.picking", string="Picking", readonly=True
     )
     wiz_picking_id = fields.Many2one(
         comodel_name="stock.picking",
@@ -294,7 +290,7 @@ class WizCandidatePicking(models.TransientModel):
         readonly=True,
     )
     name = fields.Char(
-        related="picking_id.name", readonly=True, string="Candidate Picking",
+        related="picking_id.name", readonly=True, string="Candidate Picking"
     )
     partner_id = fields.Many2one(
         comodel_name="res.partner",
@@ -302,26 +298,26 @@ class WizCandidatePicking(models.TransientModel):
         readonly=True,
         string="Partner",
     )
-    state = fields.Selection(related="picking_id.state", readonly=True,)
+    state = fields.Selection(related="picking_id.state", readonly=True)
     date = fields.Datetime(
-        related="picking_id.date", readonly=True, string="Creation Date",
+        related="picking_id.date", readonly=True, string="Creation Date"
     )
     product_qty_reserved = fields.Float(
         "Reserved",
         compute="_compute_picking_quantity",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         readonly=True,
     )
     product_uom_qty = fields.Float(
         "Demand",
         compute="_compute_picking_quantity",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         readonly=True,
     )
     product_qty_done = fields.Float(
         "Done",
         compute="_compute_picking_quantity",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         readonly=True,
     )
     # For reload kanban view

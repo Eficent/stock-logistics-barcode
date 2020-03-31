@@ -4,19 +4,15 @@ from odoo import _, fields, models
 from odoo.exceptions import ValidationError
 from odoo.fields import first
 
-from odoo.addons import decimal_precision as dp
-
 
 class WizStockBarcodesReadInventory(models.TransientModel):
     _name = "wiz.stock.barcodes.read.inventory"
     _inherit = "wiz.stock.barcodes.read"
     _description = "Wizard to read barcode on inventory"
 
-    inventory_id = fields.Many2one(comodel_name="stock.inventory", readonly=True,)
+    inventory_id = fields.Many2one(comodel_name="stock.inventory", readonly=True)
     inventory_product_qty = fields.Float(
-        string="Inventory quantities",
-        digits=dp.get_precision("Product Unit of Measure"),
-        readonly=True,
+        string="Inventory quantities", digits="Product Unit of Measure", readonly=True
     )
 
     def name_get(self):
@@ -58,9 +54,7 @@ class WizStockBarcodesReadInventory(models.TransientModel):
         StockInventoryLine = self.env["stock.inventory.line"]
         line = StockInventoryLine.search(self._prepare_inventory_line_domain(), limit=1)
         if line:
-            line.write(
-                {"product_qty": line.product_qty + self.product_qty,}
-            )
+            line.write({"product_qty": line.product_qty + self.product_qty})
         else:
             line = StockInventoryLine.create(self._prepare_inventory_line())
         self.inventory_product_qty = line.product_qty

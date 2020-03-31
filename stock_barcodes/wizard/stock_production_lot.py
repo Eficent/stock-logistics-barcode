@@ -8,11 +8,11 @@ class WizStockBarcodesNewLot(models.TransientModel):
     _name = "wiz.stock.barcodes.new.lot"
     _description = "Wizard to create new lot from barcode scanner"
 
-    product_id = fields.Many2one(comodel_name="product.product", required=True,)
-    lot_name = fields.Char(string="Lot name", required=True,)
+    product_id = fields.Many2one(comodel_name="product.product", required=True)
+    lot_name = fields.Char(string="Lot name", required=True)
 
     def on_barcode_scanned(self, barcode):
-        product = self.env["product.product"].search([("barcode", "=", barcode),])[:1]
+        product = self.env["product.product"].search([("barcode", "=", barcode)])[:1]
         if product and not self.product_id:
             self.product_id = product
             return
@@ -22,6 +22,7 @@ class WizStockBarcodesNewLot(models.TransientModel):
         return {
             "product_id": self.product_id.id,
             "name": self.lot_name,
+            "company_id": self.env.user.company_id.id,
         }
 
     def confirm(self):
