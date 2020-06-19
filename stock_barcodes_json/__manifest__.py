@@ -10,8 +10,8 @@
     "category": "Extra Tools",
     "depends": ["stock_barcodes", "printer_zpl2"],
     "data": [
-        "views/barcode_views.xml",
-        "security/ir.model.access.csv",
+        #"views/barcode_views.xml",
+        #"security/ir.model.access.csv",
         "wizard/print_record_label.xml",
     ],
     "installable": True,

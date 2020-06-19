@@ -34,31 +34,33 @@ class PrintingLabelZpl2(models.Model):
             data = self.env.context.get("ld", False)
         return data
 
+    def custom_fill_component(self, line):
+        for component in self.component_ids.sorted("sequence"):
+            if component.name == "Product Name":
+                component.data = "str('%s')" % line.product_id.display_name
+            elif component.name == "QRCode":
+                component.data = {"product_id": line.product_id.id, "product_qty": line.product_qty,
+                                  "uom_id": line.product_id.uom_id.id}
+            elif component.name == "Qty + UoM":
+                component.data = "str('%s')" % (str(line.product_qty) + " " + line.product_id.uom_id.name,)
+            else:
+                json = {
+                    "product_barcode": line.product_barcode,
+                    "lot_barcode": line.lot_barcode,
+                    "uom": str(line.product_qty) + " " + line.product_id.uom_id.name,
+                    "package_barcode": line.package_barcode,
+                    "product_qty": line.product_qty,
+                }
+                component.data = json
+
     def print_label(self, printer, record, page_count=1, **extra):
         res = super().print_label(printer, record, page_count=1, **extra)
         for label in self:
             if label.data_type == "json":
-                self.fill_component(self.env.context.get("mapping"))
-                for component in self.component_ids:
-                    data = safe_eval(component.data)
-                    data_copy = data.copy()
-                    info = ""
-                    for key, val in data.items():
-                        if not val:
-                            data_copy.pop(key)
-                            continue
-                        if isinstance(val, models.BaseModel):
-                            data_copy[key] = val.id
-                        elif isinstance(val, list):
-                            data_copy[key] = val[0]
-                        elif isinstance(val, (int, float, str)):
-                            data_copy[key] = val
-                            info += "%s" % (val) + "\n"
-                        else:
-                            raise ValueError
+                self.custom_fill_component(self.env.context.get("mapping"))
                 # Send the label to printer
-                label_contents = label.with_context(ld=data_copy)._generate_zpl2_data(
-                    self.env.context.get("mapping"), page_count=1, **extra
+                label_contents = label._generate_zpl2_data(
+                    label, page_count=page_count, **extra
                 )
                 printer.print_document(
                     report=None, content=label_contents, doc_format="raw"

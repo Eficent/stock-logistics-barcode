@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="view_stock_barcodes_mapping_form" model="ir.ui.view">
-        <field name="model">wiz.stock.barcodes.mapping</field>
+        <field name="model">wiz.stock.barcodes.read</field>
         <field name="arch" type="xml">
             <form>
                 <header>

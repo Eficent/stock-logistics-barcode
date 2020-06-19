@@ -9,12 +9,9 @@ class WizStockBarcodesRead(models.AbstractModel):
 
     def process_barcode(self, barcode):
         try:
-            safe_eval(barcode)
+            vals = safe_eval(barcode)
         except Exception:
             return super().process_barcode(barcode)
-
-        vals = safe_eval(barcode)
-
         if "product_id" in vals.keys():
             # Check if product exists
             self.product_id = vals["product_id"]
